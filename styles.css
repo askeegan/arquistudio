@@ -544,3 +544,30 @@ body::after {
 @media (max-width: 720px) {
   .bg-veil { background: rgba(243, 240, 232, .82); }
 }
+
+/* ---------- launch note: stands in for the signup form until a mailing service is wired ---------- */
+.launch-note[hidden] { display: none; }
+.launch-note { margin-top: clamp(22px, 3vw, 36px); }
+.follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bone);
+  text-decoration: none;
+  font: 600 12.5px/1 var(--font-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: background-color .4s var(--ease);
+}
+.follow:hover { background: #3a3a34; }
+.follow:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.follow .arrow { font-size: 1.15em; line-height: 1; }
+.launch-note .note { margin: 14px 0 0 4px; }
+@media (min-width: 721px) {
+  .launch-note { margin-top: calc(28 * var(--u)); }
+  .follow { font-size: calc(12.5 * var(--u)); padding: calc(16 * var(--u)) calc(28 * var(--u)); gap: calc(12 * var(--u)); }
+  .launch-note .note { font-size: calc(13 * var(--u)); margin: calc(14 * var(--u)) 0 0 calc(4 * var(--u)); }
+}

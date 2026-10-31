@@ -30,7 +30,7 @@
     </div>
 
     <header class="top">
-      <a class="brand" href="/" aria-label="ARQUISTUDIO home" data-cursor="Home">
+      <a class="brand" href="./" aria-label="ARQUISTUDIO home" data-cursor="Home">
         <img src="assets/arqui-wordmark.png" alt="ARQUI" width="1320" height="450">
       </a>
       <p class="tag">Coming soon</p>
@@ -59,7 +59,12 @@
 
       <p class="sub reveal" style="--d:.9s">Building brand architectures &amp; digital futures.</p>
 
-      <form class="signup reveal" style="--d:1.05s" id="signup" novalidate>
+      <div class="launch-note reveal" style="--d:1.05s" id="launch-note">
+        <a class="follow" href="https://instagram.com/arquistudio.co" target="_blank" rel="noopener" data-cursor="Follow"><span>Follow @arquistudio.co</span><span class="arrow" aria-hidden="true">↗</span></a>
+        <p class="note">Launch news and early access will land on Instagram first.</p>
+      </div>
+
+      <form class="signup reveal" style="--d:1.05s" id="signup" novalidate hidden>
         <label class="vh" for="email">Email address</label>
         <div class="field">
           <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="your@email.com" required data-cursor-text>

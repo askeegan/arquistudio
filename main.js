@@ -2,10 +2,11 @@
   'use strict';
 
   // ---- Config -------------------------------------------------------------
-  // Set ENDPOINT when the email service is chosen (Mailchimp, Klaviyo, Netlify
-  // Forms, Formspree, a Google Sheets script...). It receives a JSON POST:
-  // { email: "...", source: "meantime" }. While empty, the form only
-  // simulates success and does NOT store the address anywhere.
+  // Set ENDPOINT when the email service is chosen (Mailchimp, Klaviyo,
+  // Formspree, a Google Sheets script...). It receives a JSON POST:
+  // { email: "...", source: "meantime" }. While it is empty the signup form
+  // stays hidden and the "Follow on Instagram" launch note is shown instead,
+  // so visitors are never told they signed up when nothing was saved.
   var CONFIG = {
     ENDPOINT: ''
   };
@@ -272,6 +273,12 @@
 
   // ---- Signup form --------------------------------------------------------
   var form = document.getElementById('signup');
+  // The real form stays hidden (a launch note is shown instead) until ENDPOINT is set.
+  if (CONFIG.ENDPOINT) {
+    form.hidden = false;
+    var launchNote = document.getElementById('launch-note');
+    if (launchNote) launchNote.hidden = true;
+  }
   var note = document.getElementById('note');
   var email = document.getElementById('email');
   var btn = form.querySelector('button');
