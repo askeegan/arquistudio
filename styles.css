@@ -319,7 +319,7 @@ a { color: inherit; }
     width .6s var(--ease), height .6s var(--ease),
     left .6s var(--ease), top .6s var(--ease),
     border-radius .5s var(--ease), background-color .4s var(--ease),
-    border-color .4s var(--ease), transform .35s var(--ease),
+    border-color .4s var(--ease), transform .35s var(--ease), opacity .45s var(--ease),
     backdrop-filter .5s var(--ease), -webkit-backdrop-filter .5s var(--ease);
 }
 .cursor.down .cursor-ring::before { transform: scale(.82); }
@@ -608,5 +608,6 @@ body::after {
 @media (min-width: 721px) { .aside { z-index: 3; } }
 
 /* dot: only the precise dot shows (the trailing ring is hidden) */
-.cursor.dot .cursor-ring::before { width: 0; height: 0; left: 0; top: 0; border-width: 0; opacity: 0; }
+.cursor.dot .cursor-ring::before { width: 6px; height: 6px; left: -3px; top: -3px; opacity: 0; }
+.cursor.dot .cursor-dot::after { transform: scale(1.7); transition: transform .5s var(--ease), background-color .45s var(--ease); }
 .cursor.dot.light { --ink-c: var(--bone); }
