@@ -609,4 +609,4 @@ body::after {
 
 /* dot: only the precise dot shows (the trailing ring is hidden) */
 .cursor.dot .cursor-ring::before { width: 0; height: 0; left: 0; top: 0; border-width: 0; opacity: 0; }
-.cursor.dot { --ink-c: var(--bone); }
+.cursor.dot.light { --ink-c: var(--bone); }

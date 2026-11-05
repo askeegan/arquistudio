@@ -257,7 +257,10 @@
         wake();
       }
       else if (action) { label.textContent = action.getAttribute('data-cursor'); setState('action'); }
-      else if (el.closest('[data-cursor-dot]')) setState('dot');
+      else if (el.closest('[data-cursor-dot]')) {
+        cursor.classList.toggle('light', el.closest('[data-cursor-dot]').getAttribute('data-cursor-dot') === 'light');
+        setState('dot');
+      }
       else if (el.closest('[data-cursor-text]')) setState('text');
       else setState(null);
     });
