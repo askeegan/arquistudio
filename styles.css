@@ -592,7 +592,7 @@ body::after {
 .fld { display: block; margin-bottom: 14px; }
 .fld span { display: block; font: 600 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 7px; opacity: .65; }
 .fld input { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; padding: 14px 16px; border: 1px solid var(--ink); border-radius: 12px; background: transparent; color: var(--ink); }
-.fld input:focus { outline: 2px solid #D9FF65; outline-offset: 1px; background: #fff8; }
+.fld input:focus { outline: none; box-shadow: 0 0 0 1px var(--ink); }
 .fld input.bad { border-color: var(--clay); }
 .send { border: 0; cursor: pointer; margin-top: 8px; }
 .send[disabled] { opacity: .6; cursor: progress; }
