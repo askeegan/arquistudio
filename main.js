@@ -271,8 +271,9 @@
   }
 
   // ---- Enquiry popup ------------------------------------------------------
-  // Until ENDPOINT is set, the button is a plain mailto link to anna@arquistudio.co,
-  // so it always works. With ENDPOINT set it opens the popup instead.
+  // The button opens the popup. With ENDPOINT set, the form posts there (Formspree
+  // forwards it to anna@arquistudio.co). Without it, sending opens the visitor's
+  // mail app with the details pre-filled, and the note says so.
   var cta = document.getElementById('cta');
   var modal = document.getElementById('modal');
   var enq = document.getElementById('enquiry');
@@ -307,7 +308,7 @@
     enqNote.classList.toggle('error', !!isError);
   }
 
-  if (CONFIG.ENDPOINT) {
+  {
     cta.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
     modal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeModal(); });
 
@@ -321,6 +322,13 @@
       if (enq.elements._gotcha.value) { modal.classList.add('done'); return; } // bots get a fake success
       if (!name) { enq.elements.name.classList.add('bad'); enq.elements.name.focus(); setNote('Please add your name.', true); return; }
       if (!EMAIL_RE.test(mail)) { enq.elements.email.classList.add('bad'); enq.elements.email.focus(); setNote('Please enter a valid email address.', true); return; }
+
+      if (!CONFIG.ENDPOINT) {
+        var body = 'Name: ' + name + '\nCompany: ' + company + '\nEmail: ' + mail + '\n\nTell us about your project:\n';
+        window.location.href = 'mailto:anna@arquistudio.co?subject=' + encodeURIComponent('New project enquiry from ' + name) + '&body=' + encodeURIComponent(body);
+        setNote('Your email app should open with this ready to send. If not, write to anna@arquistudio.co.');
+        return;
+      }
 
       sendBtn.disabled = true;
       setNote('Sending\u2026');
