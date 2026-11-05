@@ -2,12 +2,10 @@
   'use strict';
 
   // ---- Config -------------------------------------------------------------
-  // ENDPOINT: a form relay (Google Apps Script web app deployed from Anna's account,
-  // or similar) that emails each enquiry to anna@arquistudio.co. While it is empty the CTA is a
-  // plain mailto link, so visitors are never told a message was sent when it
-  // wasn't.
+  // ENDPOINT: our formsubmit.io form, which emails each enquiry to anna@arquistudio.co (no mail app).
+  // The popup only says "Thank you" when FormSubmit confirms it accepted the message.
   var CONFIG = {
-    ENDPOINT: ''
+    ENDPOINT: 'https://formsubmit.io/f/a91d9be8-c8d2-466b-af8c-99d6a6140c08'
   };
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -324,21 +322,21 @@
       if (!name) { enq.elements.name.classList.add('bad'); enq.elements.name.focus(); setNote('Please add your name.', true); return; }
       if (!EMAIL_RE.test(mail)) { enq.elements.email.classList.add('bad'); enq.elements.email.focus(); setNote('Please enter a valid email address.', true); return; }
 
-      if (!CONFIG.ENDPOINT) {
-        var body = 'Name: ' + name + '\nCompany: ' + company + '\nEmail: ' + mail + '\n\nTell us about your project:\n';
-        window.location.href = 'mailto:anna@arquistudio.co?subject=' + encodeURIComponent('New project enquiry from ' + name) + '&body=' + encodeURIComponent(body);
-        setNote('Your email app should open with this ready to send. If not, write to anna@arquistudio.co.');
-        return;
-      }
-
       sendBtn.disabled = true;
       setNote('Sending\u2026');
+      var data = new URLSearchParams();
+      data.append('Name', name);
+      data.append('Company', company || '-'); // their form marks Company as required
+      data.append('Email', mail);
       fetch(CONFIG.ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // plain text avoids a CORS preflight (Apps Script can't answer one)
-        body: JSON.stringify({ name: name, company: company, email: mail, _subject: 'New ARQUISTUDIO enquiry from ' + name })
+        headers: { 'Accept': 'application/json' },
+        body: data
       }).then(function (r) {
         if (!r.ok) throw new Error('bad status ' + r.status);
+        return r.json().catch(function () { return {}; });
+      }).then(function (res) {
+        if (res && (res.success === false || res.ok === false || res.error)) throw new Error('not accepted');
         modal.classList.add('done');
         setNote('Thank you. We\u2019ll be in touch soon.');
       }).catch(function () {
