@@ -5,7 +5,7 @@
   // ENDPOINT: our formsubmit.io form, which emails each enquiry to anna@arquistudio.co (no mail app).
   // The popup only says "Thank you" when FormSubmit confirms it accepted the message.
   var CONFIG = {
-    ENDPOINT: 'https://formsubmit.io/f/a91d9be8-c8d2-466b-af8c-99d6a6140c08'
+    ENDPOINT: 'https://formsubmit.io/f/a96bac86-41f0-481a-82b3-297cc0a294ee'
   };
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -327,25 +327,47 @@
 
       sendBtn.disabled = true;
       setNote('Sending\u2026');
-      var data = new URLSearchParams();
-      data.append('Name', name);
-      data.append('Company', company || '-'); // their form marks Company as required
-      data.append('Email', mail);
-      fetch(CONFIG.ENDPOINT, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: data
-      }).then(function (r) {
-        if (!r.ok) throw new Error('bad status ' + r.status);
-        return r.json().catch(function () { return {}; });
-      }).then(function (res) {
-        if (res && (res.success === false || res.ok === false || res.error)) throw new Error('not accepted');
-        modal.classList.add('done');
-        setNote('Thank you. We\u2019ll be in touch soon.');
-      }).catch(function () {
-        sendBtn.disabled = false;
-        setNote('Something went wrong. Please try again, or email anna@arquistudio.co.', true);
+      // Sent like a normal website form, into a hidden frame, because formsubmit.io
+      // refuses background (fetch) requests from other websites. The form's
+      // "After submitting" address is /thanks.html on this site: when that page loads in
+      // the frame, the message was accepted. Anything else is treated as a failure.
+      var frame = document.createElement('iframe');
+      frame.name = 'enq-frame';
+      frame.hidden = true;
+      frame.setAttribute('aria-hidden', 'true');
+      var post = document.createElement('form');
+      post.method = 'POST';
+      post.action = CONFIG.ENDPOINT;
+      post.target = 'enq-frame';
+      post.hidden = true;
+      [['Name', name], ['Company', company || '-'], ['Email', mail], ['_formsubmit_id', '']].forEach(function (p) {
+        var i = document.createElement('input'); i.type = 'hidden'; i.name = p[0]; i.value = p[1]; post.appendChild(i);
       });
+      var settled = false, started = false;
+      function finish(ok) {
+        if (settled) return; settled = true;
+        clearTimeout(timer);
+        if (frame.parentNode) frame.parentNode.removeChild(frame);
+        if (post.parentNode) post.parentNode.removeChild(post);
+        if (ok) {
+          modal.classList.add('done');
+          setNote('Thank you. We\u2019ll be in touch soon.');
+        } else {
+          sendBtn.disabled = false;
+          setNote('Something went wrong. Please try again, or email anna@arquistudio.co.', true);
+        }
+      }
+      var timer = setTimeout(function () { finish(false); }, 20000);
+      frame.addEventListener('load', function () {
+        if (!started) return; // ignore the frame's initial blank load
+        var ok = false;
+        try { ok = frame.contentWindow.location.pathname.indexOf('thanks') !== -1; } catch (err) { ok = false; } // cross-origin = not our thank-you page
+        finish(ok);
+      });
+      document.body.appendChild(frame);
+      document.body.appendChild(post);
+      started = true;
+      post.submit();
     });
   }
 })();
