@@ -60,19 +60,9 @@
       <p class="sub reveal" style="--d:.9s">Building brand architectures &amp; digital futures.</p>
 
       <div class="launch-note reveal" style="--d:1.05s" id="launch-note">
-        <a class="follow" href="https://instagram.com/arquistudio.co" target="_blank" rel="noopener" data-cursor="Follow"><span>Follow @arquistudio.co</span><span class="arrow" aria-hidden="true">↗</span></a>
-        <p class="note">Launch news and early access will land on Instagram first.</p>
+        <a class="follow" id="cta" href="mailto:anna@arquistudio.co?subject=New%20project%20enquiry" data-cursor="Say hello"><span>Start a project</span><span class="arrow" aria-hidden="true">↗</span></a>
+        <p class="note">Tell us about your brand. <a class="ig" href="https://instagram.com/arquistudio.co" target="_blank" rel="noopener" data-cursor="Follow">Or follow along on Instagram.</a></p>
       </div>
-
-      <form class="signup reveal" style="--d:1.05s" id="signup" novalidate hidden>
-        <label class="vh" for="email">Email address</label>
-        <div class="field">
-          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="your@email.com" required data-cursor-text>
-          <button type="submit" data-cursor="Join"><span>Notify me</span><span class="arrow" aria-hidden="true">→</span></button>
-        </div>
-        <input class="vh" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <p class="note" id="note" role="status" aria-live="polite">Be first in line when we open the doors. No spam.</p>
-      </form>
     </main>
 
     <footer class="meta reveal" style="--d:1.2s">
@@ -90,6 +80,23 @@
       </div>
     </div>
 
+  </div>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card">
+      <button class="modal-x" type="button" data-close aria-label="Close" data-cursor="Close">×</button>
+      <form id="enquiry" novalidate>
+        <p class="eyebrow">New project</p>
+        <h2 id="modal-title">Let&rsquo;s build <em>something.</em></h2>
+        <p class="modal-sub">Three quick details and we&rsquo;ll be in touch.</p>
+        <label class="fld"><span>Name</span><input name="name" type="text" autocomplete="name" required data-cursor-text></label>
+        <label class="fld"><span>Company</span><input name="company_name" type="text" autocomplete="organization" data-cursor-text></label>
+        <label class="fld"><span>Email</span><input name="email" type="email" inputmode="email" autocomplete="email" required data-cursor-text></label>
+        <input class="vh" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="follow send" type="submit" data-cursor="Send"><span>Send it</span><span class="arrow" aria-hidden="true">→</span></button>
+        <p class="note" id="enq-note" role="status" aria-live="polite"></p>
+      </form>
+    </div>
   </div>
   <svg class="lg-defs" width="0" height="0" aria-hidden="true" focusable="false">
     <filter id="lg" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="0" y="0" width="300" height="150" color-interpolation-filters="sRGB">

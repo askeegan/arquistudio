@@ -571,3 +571,38 @@ body::after {
   .follow { font-size: calc(12.5 * var(--u)); padding: calc(16 * var(--u)) calc(28 * var(--u)); gap: calc(12 * var(--u)); }
   .launch-note .note { font-size: calc(13 * var(--u)); margin: calc(14 * var(--u)) 0 0 calc(4 * var(--u)); }
 }
+
+.launch-note .note a.ig { border-bottom: 1px solid currentColor; text-decoration: none; }
+
+/* ---------- enquiry popup ---------- */
+.modal[hidden] { display: none; }
+.modal { position: fixed; inset: 0; z-index: 500; display: grid; place-items: center; padding: 20px; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(36, 36, 32, .42); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); animation: mfade .4s var(--ease) both; }
+.modal-card {
+  position: relative; width: min(100%, 460px); max-height: calc(100dvh - 40px); overflow: auto;
+  background: var(--bone); color: var(--ink); border-radius: 22px; padding: 38px 34px 30px;
+  box-shadow: 0 30px 80px rgba(36, 36, 32, .35);
+  animation: mrise .6s var(--ease) both;
+}
+.modal-card h2 { font: 400 clamp(34px, 6vw, 44px)/1.02 var(--font-display, 'Instrument Serif', serif); margin: 8px 0 10px; letter-spacing: -.01em; }
+.modal-card h2 em { font-style: italic; background: linear-gradient(transparent 62%, #D9FF65 62%); }
+.modal-sub { margin: 0 0 22px; opacity: .7; font-size: 15px; }
+.modal-x { position: absolute; top: 14px; right: 16px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; color: var(--ink); font-size: 26px; line-height: 1; cursor: pointer; }
+.modal-x:hover { background: rgba(36, 36, 32, .08); }
+.fld { display: block; margin-bottom: 14px; }
+.fld span { display: block; font: 600 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 7px; opacity: .65; }
+.fld input { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; padding: 14px 16px; border: 1px solid var(--ink); border-radius: 12px; background: transparent; color: var(--ink); }
+.fld input:focus { outline: 2px solid #D9FF65; outline-offset: 1px; background: #fff8; }
+.fld input.bad { border-color: var(--clay); }
+.send { border: 0; cursor: pointer; margin-top: 8px; }
+.send[disabled] { opacity: .6; cursor: progress; }
+.modal .note { margin: 14px 0 0 2px; min-height: 1.2em; }
+.modal.done .fld, .modal.done .send, .modal.done .modal-sub { display: none; }
+.modal.done .note { font: 400 30px/1.1 'Instrument Serif', serif; color: var(--ink); margin: 14px 0 0; }
+@keyframes mfade { from { opacity: 0; } }
+@keyframes mrise { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+@media (prefers-reduced-motion: reduce) { .modal-backdrop, .modal-card { animation: none; } }
+
+/* keep the left CTA block from covering the services list, so every row is fully hoverable */
+.launch-note { width: fit-content; max-width: 100%; }
+@media (min-width: 721px) { .aside { z-index: 3; } }

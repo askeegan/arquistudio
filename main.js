@@ -2,11 +2,10 @@
   'use strict';
 
   // ---- Config -------------------------------------------------------------
-  // Set ENDPOINT when the email service is chosen (Mailchimp, Klaviyo,
-  // Formspree, a Google Sheets script...). It receives a JSON POST:
-  // { email: "...", source: "meantime" }. While it is empty the signup form
-  // stays hidden and the "Follow on Instagram" launch note is shown instead,
-  // so visitors are never told they signed up when nothing was saved.
+  // ENDPOINT: the Formspree form URL (https://formspree.io/f/xxxxxxxx) that
+  // forwards enquiries to anna@arquistudio.co. While it is empty the CTA is a
+  // plain mailto link, so visitors are never told a message was sent when it
+  // wasn't.
   var CONFIG = {
     ENDPOINT: ''
   };
@@ -271,58 +270,72 @@
     });
   }
 
-  // ---- Signup form --------------------------------------------------------
-  var form = document.getElementById('signup');
-  // The real form stays hidden (a launch note is shown instead) until ENDPOINT is set.
-  if (CONFIG.ENDPOINT) {
-    form.hidden = false;
-    var launchNote = document.getElementById('launch-note');
-    if (launchNote) launchNote.hidden = true;
-  }
-  var note = document.getElementById('note');
-  var email = document.getElementById('email');
-  var btn = form.querySelector('button');
+  // ---- Enquiry popup ------------------------------------------------------
+  // Until ENDPOINT is set, the button is a plain mailto link to anna@arquistudio.co,
+  // so it always works. With ENDPOINT set it opens the popup instead.
+  var cta = document.getElementById('cta');
+  var modal = document.getElementById('modal');
+  var enq = document.getElementById('enquiry');
+  var enqNote = document.getElementById('enq-note');
+  var sendBtn = enq.querySelector('.send');
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var lastFocus = null;
 
+  function openModal() {
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    enq.elements.name.focus();
+    document.addEventListener('keydown', onKey);
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.removeEventListener('keydown', onKey);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function onKey(e) {
+    if (e.key === 'Escape') return closeModal();
+    if (e.key !== 'Tab') return;
+    var f = modal.querySelectorAll('button, input:not(.vh)');
+    f = Array.prototype.filter.call(f, function (n) { return n.offsetParent !== null && !n.disabled; });
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
   function setNote(msg, isError) {
-    note.textContent = msg;
-    note.classList.toggle('error', !!isError);
+    enqNote.textContent = msg;
+    enqNote.classList.toggle('error', !!isError);
   }
 
-  function succeed() {
-    form.classList.add('done');
-    setNote("You're on the list. Something new is on its way.");
-  }
+  if (CONFIG.ENDPOINT) {
+    cta.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
+    modal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeModal(); });
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var value = email.value.trim();
+    enq.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = enq.elements.name.value.trim();
+      var company = enq.elements.company_name.value.trim();
+      var mail = enq.elements.email.value.trim();
+      Array.prototype.forEach.call(enq.querySelectorAll('input'), function (i) { i.classList.remove('bad'); });
 
-    if (form.elements.company.value) return succeed(); // honeypot: bots get a fake success
-    if (!EMAIL_RE.test(value)) {
-      setNote('Please enter a valid email address.', true);
-      email.focus();
-      return;
-    }
+      if (enq.elements._gotcha.value) { modal.classList.add('done'); return; } // bots get a fake success
+      if (!name) { enq.elements.name.classList.add('bad'); enq.elements.name.focus(); setNote('Please add your name.', true); return; }
+      if (!EMAIL_RE.test(mail)) { enq.elements.email.classList.add('bad'); enq.elements.email.focus(); setNote('Please enter a valid email address.', true); return; }
 
-    btn.disabled = true;
-    setNote('One moment…');
-
-    if (!CONFIG.ENDPOINT) {
-      setTimeout(succeed, 500); // placeholder until the endpoint is wired
-      return;
-    }
-
-    fetch(CONFIG.ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email: value, source: 'meantime' })
-    }).then(function (r) {
-      if (!r.ok) throw new Error('bad status ' + r.status);
-      succeed();
-    }).catch(function () {
-      btn.disabled = false;
-      setNote('Something went wrong. Please try again in a moment.', true);
+      sendBtn.disabled = true;
+      setNote('Sending\u2026');
+      fetch(CONFIG.ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name: name, company: company, email: mail, _subject: 'New ARQUISTUDIO enquiry from ' + name })
+      }).then(function (r) {
+        if (!r.ok) throw new Error('bad status ' + r.status);
+        modal.classList.add('done');
+        setNote('Thank you. We\u2019ll be in touch soon.');
+      }).catch(function () {
+        sendBtn.disabled = false;
+        setNote('Something went wrong. Please try again, or email anna@arquistudio.co.', true);
+      });
     });
-  });
+  }
 })();
