@@ -2,8 +2,8 @@
   'use strict';
 
   // ---- Config -------------------------------------------------------------
-  // ENDPOINT: the Formspree form URL (https://formspree.io/f/xxxxxxxx) that
-  // forwards enquiries to anna@arquistudio.co. While it is empty the CTA is a
+  // ENDPOINT: a form relay (Google Apps Script web app deployed from Anna's account,
+  // or similar) that emails each enquiry to anna@arquistudio.co. While it is empty the CTA is a
   // plain mailto link, so visitors are never told a message was sent when it
   // wasn't.
   var CONFIG = {
@@ -90,7 +90,7 @@
     var anchor = null;   // info panel: { x, cx, y } of the hovered row; null in every other state
     var curRow = null, panelH = 140;
     var rows = Array.prototype.slice.call(document.querySelectorAll('[data-info]'));
-    var STATES = ['action', 'text', 'info'];
+    var STATES = ['action', 'text', 'info', 'dot'];
     var info = cursor.querySelector('.cursor-info');
     var ciKicker = info.querySelector('.ci-kicker');
     var ciTitle = info.querySelector('.ci-title');
@@ -259,6 +259,7 @@
         wake();
       }
       else if (action) { label.textContent = action.getAttribute('data-cursor'); setState('action'); }
+      else if (el.closest('[data-cursor-dot]')) setState('dot');
       else if (el.closest('[data-cursor-text]')) setState('text');
       else setState(null);
     });
@@ -334,7 +335,7 @@
       setNote('Sending\u2026');
       fetch(CONFIG.ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // plain text avoids a CORS preflight (Apps Script can't answer one)
         body: JSON.stringify({ name: name, company: company, email: mail, _subject: 'New ARQUISTUDIO enquiry from ' + name })
       }).then(function (r) {
         if (!r.ok) throw new Error('bad status ' + r.status);

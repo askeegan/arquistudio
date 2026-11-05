@@ -606,3 +606,7 @@ body::after {
 /* keep the left CTA block from covering the services list, so every row is fully hoverable */
 .launch-note { width: fit-content; max-width: 100%; }
 @media (min-width: 721px) { .aside { z-index: 3; } }
+
+/* dot: only the precise dot shows (the trailing ring is hidden) */
+.cursor.dot .cursor-ring::before { width: 0; height: 0; left: 0; top: 0; border-width: 0; opacity: 0; }
+.cursor.dot { --ink-c: var(--bone); }
