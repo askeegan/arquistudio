@@ -284,16 +284,29 @@
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var lastFocus = null;
 
+  var closeTimer = null;
   function openModal() {
+    clearTimeout(closeTimer);
+    modal.classList.remove('closing');
     lastFocus = document.activeElement;
     modal.hidden = false;
     enq.elements.name.focus();
     document.addEventListener('keydown', onKey);
   }
   function closeModal() {
-    modal.hidden = true;
+    if (modal.hidden || modal.classList.contains('closing')) return;
     document.removeEventListener('keydown', onKey);
     if (lastFocus && lastFocus.focus) lastFocus.focus();
+    var finish = function () {
+      modal.hidden = true;
+      modal.classList.remove('closing', 'done');
+      enq.reset();
+      setNote('');
+      sendBtn.disabled = false;
+    };
+    if (reduce) return finish();
+    modal.classList.add('closing');            // plays the fade-out, then hides
+    closeTimer = setTimeout(finish, 450);
   }
   function onKey(e) {
     if (e.key === 'Escape') return closeModal();

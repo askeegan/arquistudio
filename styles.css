@@ -611,3 +611,11 @@ body::after {
 .cursor.dot .cursor-ring::before { width: 6px; height: 6px; left: -3px; top: -3px; opacity: 0; }
 .cursor.dot .cursor-dot::after { transform: scale(1.7); transition: transform .5s var(--ease), background-color .45s var(--ease); }
 .cursor.dot.light { --ink-c: var(--bone); }
+
+/* popup closes with a soft fade and drop, mirroring how it opens */
+.modal.closing { pointer-events: none; }
+.modal.closing .modal-backdrop { animation: mfadeout .4s var(--ease) both; }
+.modal.closing .modal-card { animation: mdrop .42s var(--ease) both; }
+@keyframes mfadeout { to { opacity: 0; } }
+@keyframes mdrop { to { opacity: 0; transform: translateY(14px) scale(.985); } }
+@media (prefers-reduced-motion: reduce) { .modal.closing .modal-backdrop, .modal.closing .modal-card { animation: none; } }
